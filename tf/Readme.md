@@ -9,7 +9,7 @@ terrafrom plan -out dashworld_1
 terrafrom apply "dashworld_1"
 ```
 
-AWS credentials need to be provided.
+AWS credentials need to be provided and the security group and profile will need to be changed.
 Number of instances can be edited in `main.tf`
 and number of clients for each instance can be edited in `install.sh`.
 
