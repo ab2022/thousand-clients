@@ -16,7 +16,7 @@ npm install
 node dashjs_world.js
 ```
 
-The Dockerfile buids, 
+The Dockerfile buids the image,
 ```
 docker build -t dashjs-world .
 ```
