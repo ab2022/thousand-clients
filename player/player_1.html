@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script src="./dash.all.min.js"></script>
+    <!--NOTE: use https://github.com/montevideo-tech/cmcd-analyzer/blob/feature/cmcd-v2-demuxed/analyzer-dashboard/public/dash.all.min.js-->
+    <title>Our DASHjs Player</title>
+
+    <script class="code">
+
+        var CMCD_DATA_GENERATED = dashjs.MetricsReporting.events.CMCD_DATA_GENERATED;
+        /* possible modes of attach cmcd data */
+        var CMCD_MODE_QUERY = 'query'; /* as query parameters */
+        var CMCD_MODE_HEADER = 'header'; /* as HTTP headers */
+        var player;
+
+	
+		var manifestUrl = "http://satpoc.com:12909/dash/Service2/manifest.mpd";
+        var player;
+        var video;
+
+        function obtenerUltimos10Caracteres(str) {
+            // Comprobar si la longitud del string es menor que 10
+            if (str.length <= 20) {
+                return str; // Retornar la cadena completa si es más corta que 10 caracteres
+            }
+            return str.slice(-20); // Devolver los últimos 10 caracteres
+        }
+
+        function init() {
+            player = dashjs.MediaPlayer().create();
+            video = document.querySelector('video');
+            player.initialize();
+
+            player.on(CMCD_DATA_GENERATED, handleCmcdDataGeneratedEvent);
+
+            player.updateSettings({
+                streaming: {
+                    cmcd: {
+                        enabled: true, /* global enable reporting of cmcd parameters */
+                        version: 2, /* 1 is the default version */
+                        reporting: {
+                            requestMode: {
+                                enabled: false, /* enable cmcdv2 request mode */
+                                mode: CMCD_MODE_QUERY, /* overrides global mode */
+                            },
+                            responseMode: {
+                                enabled: true, /* enable cmcdv2 response mode. FALSE by default */
+                                mode: CMCD_MODE_QUERY, /* overrides global mode. JSON not supported */
+                                //enabledKeys: ['sid', 'cid', 'ts', 'url', 'br', 'd', 'ot', 'tb', 'v', 'sta', 'ttfb', 'ttlb','rc', 'msd'], /* optional, overrides global keys */
+                                requestUrl: 'http://35.92.255.26:14004/cmcd/response-mode', /*mandatory, URL to send report */
+                                requestMethod: 'POST', /*optional, get by default */
+                            },
+                            stateIntervalMode: {
+                                enabled: true, /* enable cmcdv2 state-interval mode. FALSE by default */
+                                mode: CMCD_MODE_QUERY, /*overrides global mode. JSON not supported */
+                                interval: 10000,  /* time in ms between regular requests. Default 30s or 0 to omit */
+                                //enabledKeys: ['sta', 'sid', 'cid', 'sf', 'v', 'ltc', 'msd', ], /* Currently only supports: 'sta', 'ts', 'sid', 'cid', 'sf', 'v', 'lb', 'pr' */
+                                requestUrl: 'http://35.92.255.26:14004/cmcd/state-interval-mode', /* mandatory, URL to send report */
+                                requestMethod: 'POST',  /* optional, get by default */
+                            }
+                        },
+                        /*sid: 'b248658d-1d1a-4039-91d0-8c08ba597da5',*/ /* session id send with each request */
+                        cid: obtenerUltimos10Caracteres(manifestUrl), /* content id send with each request */
+                        mode: CMCD_MODE_QUERY, /* global mode if not specified in each mode */
+                        enabledKeys: ['br', 'd', 'ot', 'tb' , 'bl', 'dl', 'mtp', 'nor', 'nrr', 'su' , 'bs', 'rtp' , 'cid', 'pr', 'sf', 'sid', 'st', 'v', 'sta', 'ltc', 'msd', 'sta']
+                    }
+                }
+            });
+
+            player.setAutoPlay(true);
+            player.attachView(video);
+            player.attachSource(manifestUrl);
+		}
+
+        function handleCmcdDataGeneratedEvent(event) {
+            log('type: ' + event.mediaType);
+            log('file: ' + event.url.split('/').pop())
+            var mode = player.getSettings().streaming.cmcd.mode;
+            const cmcdVersion = player.getSettings().streaming.cmcd.version;
+            var data = {};
+            if (cmcdVersion === 1) {
+                data = mode === CMCD_MODE_HEADER ? getKeysForHeaderMode(event) : getKeysForQueryMode(event);
+            } else if (cmcdVersion === 2){
+                /* Currently, headers are always generated in cmcd version 2 */
+                data = getKeysForHeaderMode(event);
+            }
+            var keys = Object.keys(data);
+            keys = keys.sort();
+            for (var key of keys) {
+                log(key.padEnd(4) + ': ' + event.cmcdData[key]);
+            }
+            log('');
+        }
+
+        function getKeysForQueryMode(event) {
+            var cmcdData = {};
+            var cmcdString = event.cmcdString;
+
+            extractKeyValuePairs(cmcdString, cmcdData);
+
+            return cmcdData;
+        }
+
+        function getKeysForHeaderMode(event) {
+            var cmcdData = {};
+            var keys = Object.keys(event.headers);
+
+            for (var key of keys) {
+                extractKeyValuePairs(event.headers[key], cmcdData)
+            }
+            
+            return cmcdData
+        }
+
+        function extractKeyValuePairs(cmcdString, cmcdData) {
+            if (cmcdString === '') {
+                return;
+            }
+            var keyValuePairs = cmcdString.split(',');
+
+            keyValuePairs.forEach(function (keyValuePair) {
+                var data = keyValuePair.split('=');
+                var key = data[0];
+                var value = data[1];
+
+                cmcdData[key] = value;
+            })
+
+        }
+
+        function log(msg) {
+            msg = msg.length > 200 ? msg.substring(0, 200) + '...' : msg; /* to avoid repeated wrapping with large objects */
+            var tracePanel = document.getElementById('trace');
+            tracePanel.innerHTML += msg + '\n';
+            tracePanel.scrollTop = tracePanel.scrollHeight;
+            console.log(msg);
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            init();
+        });
+    </script>
+
+</head>
+<body>
+<div>
+  <video id="video" width="640" autoplay preload="none" controls="true">
+  </video>
+</div>
+</body>
+</html>
