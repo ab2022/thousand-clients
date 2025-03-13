@@ -20,9 +20,9 @@ The Dockerfile buids the image,
 ```
 docker build -t dashjs-world .
 ```
-but when the container is run it just exits and doesn't make any requests. More development needed.
+when the container is run it will exit after 1 minute due to the setTimeout() in `dashjs_world.js`. TODO: run for a longer time.
 ```
-docker run --rm --name dashworld_1 -d dashjs-world:latest
+docker run -it --rm --name dashworldab --network host -d dashjs-world:latest
 ```
 
 
