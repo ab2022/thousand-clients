@@ -15,6 +15,6 @@ terrafrom apply "dashworld"
 ```
 
 AWS credentials and profile need to be provided.
-Number of instances can be edited in the `aws_ecs_server` resource.
+Number of instances can be edited in the `aws_ecs_service` resource.
 
 

@@ -1,11 +1,10 @@
 terraform {
     required_providers {
-    aws = {
-        source  = "hashicorp/aws"
-        version = "~> 4.16"
+        aws = {
+            source  = "hashicorp/aws"
+            version = ">=5.0"
         }
     }
-    required_version = ">= 1.2.0"
 }
 
 provider "aws" {
@@ -26,7 +25,7 @@ resource "aws_instance" "ab_server" {
     count         = 100
 #    ami           = "ami-0acefc55c3a331fa8" #ubuntu for graviton in us-west-2
 #    instance_type = "m8g.xlarge"
-    ami           = "ami-00c257e12d6828491"
+    ami           = "ami-00c257e12d6828491" #ubuntu for amd64/intel
     instance_type = "c5a.4xlarge"
     vpc_security_group_ids = [data.aws_security_group.ab_subnet.id]
     key_name      = "${aws_key_pair.deployer.id}"

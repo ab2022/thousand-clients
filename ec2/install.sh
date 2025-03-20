@@ -8,7 +8,7 @@ sudo apt install -y chromium
 
 sleep 10
 
-for i in {0..2}; do
+for i in {0..29}; do
     debport="1090${i}"
     if (( i > 9 )); then
         debport="109${i}"
