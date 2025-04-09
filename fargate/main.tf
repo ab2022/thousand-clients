@@ -23,12 +23,12 @@ resource "aws_cloudwatch_log_group" "my_log_group" {
 }
 
 resource "aws_ecs_task_definition" "app_task" {
-    family                   = "thousands-first-task" # task name
+    family                   = "thousands-taskdef" # task name
     container_definitions    = <<DEFINITION
     [
         {
-            "name": "thousands-first-task",
-            "image": "341487011637.dkr.ecr.us-west-2.amazonaws.com/dashworld:latest",
+            "name": "thousands-taskdef",
+            "image": "341487011637.dkr.ecr.us-west-2.amazonaws.com/dashworld:v1.05m",
             "essential": true,
             "memory": 512,
             "cpu": 256,
@@ -92,7 +92,7 @@ resource "aws_ecs_service" "app_service" {
     cluster         = "${aws_ecs_cluster.my_cluster.id}"        # Reference the created Cluster
     task_definition = "${aws_ecs_task_definition.app_task.arn}" # Reference the task that the service will spin up
     launch_type     = "FARGATE"
-    desired_count   = 5 # Set the number of containers
+    desired_count   = 50 # Set the number of containers
 
     network_configuration {
         subnets          = ["${aws_default_subnet.default_subnet_a.id}", "${aws_default_subnet.default_subnet_b.id}"]
@@ -100,6 +100,35 @@ resource "aws_ecs_service" "app_service" {
         security_groups  = ["${aws_security_group.service_security_group.id}"] # Set up the security group
     }
 }
+
+resource "aws_ecs_service" "another_app_service" {
+    name            = "thousands-second-service"                 # Name of the service
+    cluster         = "${aws_ecs_cluster.my_cluster.id}"        # Reference the created Cluster
+    task_definition = "${aws_ecs_task_definition.app_task.arn}" # Reference the task that the service will spin up
+    launch_type     = "FARGATE"
+    desired_count   = 50 # Set the number of containers
+
+    network_configuration {
+        subnets          = ["${aws_default_subnet.default_subnet_a.id}", "${aws_default_subnet.default_subnet_b.id}"]
+        assign_public_ip = true                                                # Provide the containers with public IPs
+        security_groups  = ["${aws_security_group.service_security_group.id}"] # Set up the security group
+    }
+}
+
+resource "aws_ecs_service" "this_app_service" {
+    name            = "thousands-third-service"                 # Name of the service
+    cluster         = "${aws_ecs_cluster.my_cluster.id}"        # Reference the created Cluster
+    task_definition = "${aws_ecs_task_definition.app_task.arn}" # Reference the task that the service will spin up
+    launch_type     = "FARGATE"
+    desired_count   = 50 # Set the number of containers
+
+    network_configuration {
+        subnets          = ["${aws_default_subnet.default_subnet_a.id}", "${aws_default_subnet.default_subnet_b.id}"]
+        assign_public_ip = true                                                # Provide the containers with public IPs
+        security_groups  = ["${aws_security_group.service_security_group.id}"] # Set up the security group
+    }
+}
+
 
 resource "aws_security_group" "service_security_group" {
     ingress {
