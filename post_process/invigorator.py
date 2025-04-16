@@ -4,6 +4,7 @@ import re
 from urllib.parse import unquote
 
 ROWS_PER_CHUNK = 10000
+logfile = "/home/ab/work/thousand_clients/origin_logs/out_clean_large.log"
 
 def invig(x):
     #x[5] ... "5" is the column label written by usecols=[0,5]
@@ -28,8 +29,7 @@ def invig(x):
 
 def get_data():
     F = pd.DataFrame()
-    data = "/home/ab/work/thousand_clients/origin_logs/out_clean_large.log"
-    reader = pd.read_table(data, sep=" ", header=None, engine="c", usecols=[0,5], chunksize=ROWS_PER_CHUNK, iterator=True)
+    reader = pd.read_table(logfile, sep=" ", header=None, engine="c", usecols=[0,5], chunksize=ROWS_PER_CHUNK, iterator=True)
     i = 1
     for data_chunk in reader:
          processed_chunk = data_chunk.apply(invig, axis=1)
