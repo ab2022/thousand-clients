@@ -4,51 +4,56 @@ import re
 from urllib.parse import unquote
 
 ROWS_PER_CHUNK = 10000
-logfile = "/home/ab/work/thousand_clients/origin_logs/out_clean_large.log"
+logfile = "path/to/logfile.log"
 
-def invig(x):
-    #x[5] ... "5" is the column label written by usecols=[0,5]
-    try:
-        cmcds = re.search(r'CMCD=(.*) ', x[5]).group(1)
-    except AttributeError:
-        print("ALB: no match for 'CMCD'")
-        return
-    cmcds = unquote(cmcds)
-    A = cmcds.split(',')
+def access(x):
+    ua_endpoint = cmcds = None
     D = {}
-    for B in A:
+    """ 3 cases for log lines:
+    1) web server log (request mode GET). has both uae and cmcds
+    2) web server log (request mode GET). has uae and no cmcds
+    3) endpoint log (response/state int. mode POST) no uae and awlays has cmcds
+    """
+    try:
+        #x[5] ... "5" is the column label written by usecols=[0,5]
+        #case 1)
+        res = re.search(r'/dash/Service2/(.*)\?CMCD=(.*) ', x[5])
+        ua_endpoint = res.group(1)
+        cmcds = res.group(2)
+    except AttributeError:
         try:
-            k, v = B.split('=')
-        except ValueError:
-            k = B
-            v = True
-        D[k] = v
-
-    return pd.Series({'ip': x[0], **D})
+            ua_endpoint = re.search(r'/dash/Service2/(.*) ', x[5]).group(1) #case 2)
+        except AttributeError:
+            cmcds = re.search(r'CMCD=(.*) ', x[5]).group(1) #case 3)
+    if cmcds:
+        cmcds = unquote(cmcds)
+        A = cmcds.split(',')
+        for B in A:
+            try:
+                k, v = B.split('=')
+            except ValueError:
+                k = B
+                v = True
+            D[k] = v
+    return pd.Series({'ip': x[0], **({'uae': ua_endpoint} if ua_endpoint else {}), **D})
 
 
 def get_data():
     F = pd.DataFrame()
     reader = pd.read_table(logfile, sep=" ", header=None, engine="c", usecols=[0,5], chunksize=ROWS_PER_CHUNK, iterator=True)
-    i = 1
+    i = 0
     for data_chunk in reader:
-         processed_chunk = data_chunk.apply(invig, axis=1)
+         processed_chunk = data_chunk.apply(access, axis=1)
          F = pd.concat([F, processed_chunk])
-         print('line {}'.format(i*ROWS_PER_CHUNK))
          i = i+1
+         print('line {}'.format(i*ROWS_PER_CHUNK))
 
     return F
 
 
 if __name__ == '__main__':
 
-    if sys.argv[1] == 'get_data':
-        F = get_data()
-
-
-
-
-
-
-
+    if len(sys.argv) > 1:
+        if sys.argv[1] == 'get_data':
+            F = get_data()
 
