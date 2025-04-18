@@ -12,7 +12,7 @@ def access(x):
     """ 3 cases for log lines:
     1) web server log (request mode GET). has both uae and cmcds
     2) web server log (request mode GET). has uae and no cmcds
-    3) endpoint log (response/state int. mode POST) no uae and awlays has cmcds
+    3) endpoint log (response/state int. mode POST) no uae and always has cmcds
     """
     try:
         #x[5] ... "5" is the column label written by usecols=[0,5]
@@ -36,6 +36,21 @@ def access(x):
                 v = True
             D[k] = v
     return pd.Series({'ip': x[0], **({'uae': ua_endpoint} if ua_endpoint else {}), **D})
+
+
+def num_sta_eq_p(F):
+    N = F
+    P = N[['sid', 'sta']]
+    R = P[P.sta == '"p"'].value_counts().values #R is the ndarray to plot
+
+    import matplotlib.pyplot as plt
+    fig = plt.figure(figsize=(12,8))
+    ax = fig.add_subplot()
+    ax.plot(R, label="num of sta='p'");
+    ax.xaxis.set_ticklabels([])
+    ax.set_xlabel('sids')
+    ax.legend()
+    plt.show()
 
 
 def get_data():
