@@ -35,27 +35,36 @@ def access(x):
                 k = B
                 v = True
             D[k] = v
-    return pd.Series({'ip': x[0], **({'uae': ua_endpoint} if ua_endpoint else {}), **D})
+    return pd.Series({'ip': x[0], 'time': x[3][13:], **({'uae': ua_endpoint} if ua_endpoint else {}), **D})
 
 
 def num_sta_eq_p(F):
     N = F
     P = N[['sid', 'sta']]
     R = P[P.sta == '"p"'].value_counts().values #R is the ndarray to plot
+    the_plot(R, "num of sta='p'", 'sids')
 
+
+def req_per_sec(F):
+    T = pd.to_datetime(F.time, format='mixed')
+    U = T.value_counts().sort_index().values
+    the_plot(U, 'reqs per sec', 'secs')
+
+
+def the_plot(data, lab, xlab):
     import matplotlib.pyplot as plt
-    fig = plt.figure(figsize=(12,8))
+    fig = plt.figure(figsize=(16,8))
     ax = fig.add_subplot()
-    ax.plot(R, label="num of sta='p'");
+    ax.plot(data, label=lab);
     ax.xaxis.set_ticklabels([])
-    ax.set_xlabel('sids')
+    ax.set_xlabel(xlab)
     ax.legend()
     plt.show()
 
 
 def get_data():
     F = pd.DataFrame()
-    reader = pd.read_table(logfile, sep=" ", header=None, engine="c", usecols=[0,5], chunksize=ROWS_PER_CHUNK, iterator=True)
+    reader = pd.read_table(logfile, sep=" ", header=None, engine="c", usecols=[0,3,5], chunksize=ROWS_PER_CHUNK, iterator=True)
     i = 0
     for data_chunk in reader:
          processed_chunk = data_chunk.apply(access, axis=1)
