@@ -13,6 +13,6 @@ Also included is a player that uses the dash.js client from
 [this qualabs repo](https://github.com/montevideo-tech/cmcd-analyzer/tree/feature/cmcd-v2-demuxed/analyzer-dashboard/public), 
 which has some support for CMCDv2.
 
-Lastly, `post_processing` dir contains python scripts for some preliminary analysis of both request and response mode log files.
+Lastly, `post_process` dir contains python scripts for some preliminary analysis of both request and response mode log files.
 
 

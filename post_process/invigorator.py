@@ -39,8 +39,7 @@ def access(x):
 
 
 def num_sta_eq_p(F):
-    N = F
-    P = N[['sid', 'sta']]
+    P = F[['sid', 'sta']]
     R = P[P.sta == '"p"'].value_counts().values #R is the ndarray to plot
     the_plot(R, "num of sta='p'", 'sids')
 
@@ -53,7 +52,7 @@ def req_per_sec(F):
 
 def the_plot(data, lab, xlab):
     import matplotlib.pyplot as plt
-    fig = plt.figure(figsize=(16,8))
+    fig = plt.figure(figsize=(12,8))
     ax = fig.add_subplot()
     ax.plot(data, label=lab);
     ax.xaxis.set_ticklabels([])
