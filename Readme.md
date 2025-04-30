@@ -6,6 +6,7 @@ Several ways to run automated dash.js clients using headless chromium or chrome:
 1. bash script on localhost
 1. terraform for AWS EC2 instances
 1. terraform for Fargate in AWS
+1. terraform for Compute Engine in Gcloud
 1. terraform for Cloud Run in Gcloud
 1. javascript node.js with puppeteer and docker
 

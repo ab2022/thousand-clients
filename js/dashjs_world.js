@@ -18,7 +18,7 @@ const chromium = require("@sparticuz/chromium");
         // Open dash.js.
         //await page.goto("https://www.google.com", { waitUntil: "networkidle0" });
         //await page.goto('https://reference.dashif.org/dash.js/nightly/samples/dash-if-reference-player/index.html');
-        await page.goto('http://localhost/player_1.html');
+        await page.goto('http://ngx24.vastplots.com/player_1.html');
 
         // Set screen size.
         await page.setViewport({width: 1280, height: 720});
@@ -55,7 +55,7 @@ const chromium = require("@sparticuz/chromium");
         //Run the content for 10 seconds and then close the browser.
         setTimeout(() => {
             browser.close();
-        }, 60000);
+        }, 900000);
     }
     catch (error) {
         throw new Error(error.message);
