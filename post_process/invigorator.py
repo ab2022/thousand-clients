@@ -40,8 +40,10 @@ def access(x):
 
 def num_sta_eq_p(F):
     P = F[['sid', 'sta']]
-    R = P[P.sta == '"p"'].value_counts().values #R is the ndarray to plot
-    the_plot(R, "num of sta='p'", 'sids')
+    R_0 = P[P.sta == '"p"'].value_counts()
+    R_1 = P[P.sta == '"pl"'].value_counts()
+    R = pd.concat([R_0, R_1]).groupby(level=[0]).sum()
+    the_plot(R.values, "num of sta='p' or 'pl'", 'sids')
 
 
 def req_per_sec(F):
