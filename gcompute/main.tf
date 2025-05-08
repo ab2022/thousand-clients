@@ -1,7 +1,7 @@
 provider "google" {
     project     = "abproj1-dev-738828"
     region      = "us-central1"
-    credentials = file("PATH/TO/CREDENTIALS/FILE")
+    credentials = file(var.gcloudcreds)
 }
 
 resource "google_compute_instance" "client" {

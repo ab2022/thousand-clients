@@ -18,7 +18,7 @@ data "aws_security_group" "ab_subnet" {
 
 resource "aws_key_pair" "deployer" {
     key_name   = "deployer-key"
-    public_key = "${file("{/PATH/TO/PUBLIC_SSH_KEY}")}" #add path to public key
+    public_key = "${file(var.sshkey)}" #add path to public key
 }
 
 resource "aws_instance" "ab_server" {
