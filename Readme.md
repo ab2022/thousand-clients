@@ -1,8 +1,8 @@
 
-## Thousands (or more) of automated dash.js clients.
+## Thousands (or more) of automated dash.js or shaka player clients.
 
 
-Several ways to run automated dash.js clients using headless chromium or chrome:
+Several ways to run automated DASH clients using headless chromium or chrome:
 1. bash script on localhost
 1. terraform for AWS EC2 instances
 1. terraform for Fargate in AWS
