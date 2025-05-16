@@ -1,0 +1,17 @@
+
+## Container with headless chrome in alpine
+
+Containerized chrome web browser with no 3rd party javascript libraries and minimal dependencies.
+
+To build from this directory
+```
+docker build -t alpinechrome:latest .
+```
+To run, an MPD URL should be appended to the `docker run` command line.
+
+For example to run hosted shaka player on the URL `https://satpoc.com:12910/dash/Service2/manifest.mpd`
+```
+docker run -it --rm --name alchro --network host -d alpinechrome:latest "https://nightly-dot-shaka-player-demo.appspot.com/demo/#audiolang=en-US;textlang=en-US;cmcd.enabled=true;uilang=en-US;assetBase64=eyJuYW1lIjoic2t5IG5ld3MgIiwic2hvcnROYW1lIjoiIiwiaWNvblVyaSI6IiIsIm1hbmlmZXN0VXJpIjoiaHR0cHM6Ly9zYXRwb2MuY29tOjEyOTEwL2Rhc2gvU2VydmljZTIvbWFuaWZlc3QubXBkIiwic291cmNlIjoiQ3VzdG9tIiwiZm9jdXMiOmZhbHNlLCJkaXNhYmxlZCI6ZmFsc2UsImV4dHJhVGV4dCI6W10sImV4dHJhVGh1bWJuYWlsIjpbXSwiZXh0cmFDaGFwdGVyIjpbXSwiY2VydGlmaWNhdGVVcmkiOm51bGwsImRlc2NyaXB0aW9uIjpudWxsLCJpc0ZlYXR1cmVkIjpmYWxzZSwiZHJtIjpbIk5vIERSTSBwcm90ZWN0aW9uIl0sImZlYXR1cmVzIjpbIlZPRCJdLCJsaWNlbnNlU2VydmVycyI6eyJfX3R5cGVfXyI6Im1hcCJ9LCJvZmZsaW5lTGljZW5zZVNlcnZlcnMiOnsiX190eXBlX18iOiJtYXAifSwibGljZW5zZVJlcXVlc3RIZWFkZXJzIjp7Il9fdHlwZV9fIjoibWFwIn0sInJlcXVlc3RGaWx0ZXIiOm51bGwsInJlc3BvbnNlRmlsdGVyIjpudWxsLCJjbGVhcktleXMiOnsiX190eXBlX18iOiJtYXAifSwiZXh0cmFDb25maWciOm51bGwsImV4dHJhVWlDb25maWciOm51bGwsImFkVGFnVXJpIjpudWxsLCJpbWFWaWRlb0lkIjpudWxsLCJpbWFBc3NldEtleSI6bnVsbCwiaW1hQ29udGVudFNyY0lkIjpudWxsLCJpbWFNYW5pZmVzdFR5cGUiOm51bGwsIm1lZGlhVGFpbG9yVXJsIjpudWxsLCJtZWRpYVRhaWxvckFkc1BhcmFtcyI6bnVsbCwidXNlSU1BIjp0cnVlLCJtaW1lVHlwZSI6bnVsbH0=;panel=CUSTOM%20CONTENT;build=uncompiled"
+```
+
+
