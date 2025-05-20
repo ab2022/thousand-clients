@@ -52,6 +52,18 @@ def req_per_sec(F):
     the_plot(U, 'reqs per sec', 'secs')
 
 
+def what_type(F):
+    #mpd, init segment, video or audio
+    F['type'] = F['uae'].str[-3:]
+    F['type'].value_counts() #over all sids
+
+    H = F[['sid', 'type']].value_counts().reset_index() #per sid
+    import matplotlib.pyplot as plt
+    #example distribution of reqs for mpd
+    H[H.type == 'mpd'].hist(figsize=(12,8))
+    plt.show()
+
+
 def the_plot(data, lab, xlab):
     import matplotlib.pyplot as plt
     fig = plt.figure(figsize=(12,8))
