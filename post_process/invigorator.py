@@ -30,7 +30,7 @@ def access(x):
         A = cmcds.split(',')
         for B in A:
             try:
-                k, v = B.split('=')
+                k, v = B.split('=', 1)
             except ValueError:
                 k = B
                 v = True
@@ -53,13 +53,13 @@ def req_per_sec(F):
 
 
 def what_type(F):
-    #mpd, init segment, video or audio
+    #mpd or init (mp4), video (p4v) or audio (p4a) segment
     F['type'] = F['uae'].str[-3:]
     F['type'].value_counts() #over all sids
 
     H = F[['sid', 'type']].value_counts().reset_index() #per sid
     import matplotlib.pyplot as plt
-    #example distribution of reqs for mpd
+    #example: distribution of reqs for mpd
     H[H.type == 'mpd'].hist(figsize=(12,8))
     plt.show()
 
